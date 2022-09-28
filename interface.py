@@ -30,7 +30,9 @@ def interface_parameters_changer(K_NN_MIN, K_NN_MAX,
                              FRICTION_MIN, FRICTION_MAX, FRICTION_N,
                              FT_MIN, FT_MAX, FT_N,
                              eitc):
-    model_list = []
+    new_models_list = []
+    all_models_name = []
+    all_models_name.append(file_path.split('\\')[-1][:-4])
     if 'TYPE "CC2DInterface"' in Material_db:
         count = Material_db.count('TYPE "CC2DInterface"')
         if count > 1:
@@ -69,10 +71,11 @@ def interface_parameters_changer(K_NN_MIN, K_NN_MAX,
                                 data[line+9]= '  TENSION_ELIPS {}\n'.format(values)
                                 overall_counter=(count1-1)*nktt*nc*nf*nft*neitc+(count2-1)*nc*nf*nft*neitc+(count3-1)*nf*nft*neitc+(count4-1)*nft*neitc+(count5-1)*neitc+count6
                                 name = "{}_Model_{}_{}_{}_{}_{}_{}".format(overall_counter, count1,count2,count3,count4,count5,count6)
-                                model_list.append(name)
+                                new_models_list.append(name)
+                                all_models_name.append(name)
                                 for x in data:
-                                    if x.find(file_path.split('\\')[-1][:-4]) != -1:
-                                        data[data.index(x)]=data[data.index(x)].replace(file_path.split('\\')[-1][:-4], name)
+                                    if x.find(all_models_name[overall_counter-1]) != -1:
+                                        data[data.index(x)]=data[data.index(x)].replace(all_models_name[overall_counter-1], name)
                                 bat_dir = os.path.join(output_dir, name)
                                 calculation_path = os.path.join(bat_dir, "AtenaCalculation")
                                 os.makedirs(calculation_path)
@@ -89,11 +92,13 @@ def interface_parameters_changer(K_NN_MIN, K_NN_MAX,
         print('\n')
     else:
         print('No CC2DInterface material found in the inp file')
-    return model_list
+    return new_models_list
         
 
 def yarn_parameters_changer(E_MIN, E_MAX, E_N, MU_MIN, MU_MAX, MU_N, RHO_MIN, RHO_MAX, RHO_N, ALPHA_MIN, ALPHA_MAX, ALPHA_N):
-    model_list = []
+    new_models_list = []
+    all_models_name = []
+    all_models_name.append(file_path.split('\\')[-1][:-4])
     if 'TYPE "CC3DElastIsotropic"' in Material_db:
         count = Material_db.count('TYPE "CC3DElastIsotropic"')
         if count > 1:
@@ -123,10 +128,11 @@ def yarn_parameters_changer(E_MIN, E_MAX, E_N, MU_MIN, MU_MAX, MU_N, RHO_MIN, RH
                         data[line+5]= '  ALPHA     {:.6e}\n'.format(values)
                         overall_counter=(count1-1)*nmu*nrho*nalpha+(count2-1)*nmu*nrho+(count3-1)*nmu+count4
                         name = "{}_Model_{}_{}_{}_{}".format(overall_counter, count1,count2,count3,count4)
-                        model_list.append(name)
+                        new_models_list.append(name)
+                        all_models_name.append(name)
                         for x in data:
-                            if x.find(file_path.split('\\')[-1][:-4]) != -1:
-                                data[data.index(x)]=data[data.index(x)].replace(file_path.split('\\')[-1][:-4], name)
+                            if x.find(all_models_name[overall_counter-1]) != -1:
+                                data[data.index(x)]=data[data.index(x)].replace(all_models_name[overall_counter-1], name)
                         bat_dir = os.path.join(output_dir, name)
                         calculation_path = os.path.join(bat_dir, "AtenaCalculation")
                         os.makedirs(calculation_path)
@@ -143,7 +149,7 @@ def yarn_parameters_changer(E_MIN, E_MAX, E_N, MU_MIN, MU_MAX, MU_N, RHO_MIN, RH
         print('\n')
     else:
         print('No CC3DElastIsotropic material found in the inp file')
-    return model_list
+    return new_models_list
 
 
 
@@ -174,7 +180,7 @@ def countdown(input_time):
         input_time -= 1
  
 
-file_path = r"C:\Users\adelpasand\Desktop\axi\parametric study--3D axi bond wizh CZM (just two tangential directions).inp"
+file_path = r"C:\Users\adelpasand\Desktop\axi\3D axi bond slip law (jump and slip) with monitoring.inp"
 output_dir = "C:/Users/adelpasand/Desktop/parametric_study"   
 data=inp_reader(file_path)
 Material_db = Material_search()
@@ -182,15 +188,15 @@ Material_db = Material_search()
 
 
 
-K_NN_MIN=5000; K_NN_MAX=10000; K_NN_N=2 # _MIN , _MAX , _N define the Min, Max and number of quantities in range including Min and Max
-K_TT_MIN=6000; K_TT_MAX=12000; K_TT_N=2
-COHESION_MIN=2; COHESION_MAX=4; COHESION_N=1
-FRICTION_MIN=0.3; FRICTION_MAX=0.4; FRICTION_N=1
+K_NN_MIN=5000; K_NN_MAX=10000; K_NN_N=1 # _MIN , _MAX , _N define the Min, Max and number of quantities in range including Min and Max
+K_TT_MIN=5000; K_TT_MAX=12000; K_TT_N=5
+COHESION_MIN=2; COHESION_MAX=6; COHESION_N=5
+FRICTION_MIN=0.3; FRICTION_MAX=0.45; FRICTION_N=3
 FT_MIN=1.5; FT_MAX=3; FT_N=1  #checking the validity of dependency between parameters--> dependency conditions: FT<C and FT<C/FRICTION
 eitc = [-1,1] # elips in tension conditions: [-1] means de-activating and [1] means activating
                 # the ellipsoidal shape of criterion in tension, i.e. for tensile normal stress shape
                 # in case of [-1,1], both condition will be considered
-model_list = interface_parameters_changer(K_NN_MIN, K_NN_MAX,
+new_models_list = interface_parameters_changer(K_NN_MIN, K_NN_MAX,
                              K_NN_N, K_TT_MIN, K_TT_MAX, K_TT_N,
                              COHESION_MIN, COHESION_MAX, COHESION_N,
                              FRICTION_MIN, FRICTION_MAX, FRICTION_N,
@@ -202,14 +208,14 @@ E_MIN=25000; E_MAX=30000; E_N=3
 MU_MIN= 0.25; MU_MAX= 0.35; MU_N=1
 RHO_MIN=0; RHO_MAX=0; RHO_N=1
 ALPHA_MIN=0; ALPHA_MAX=0; ALPHA_N=1
-""" yarn_parameters_changer(E_MIN, E_MAX, E_N,
+""" new_models_list = yarn_parameters_changer(E_MIN, E_MAX, E_N,
                         MU_MIN, MU_MAX, MU_N,
                         RHO_MIN, RHO_MAX, RHO_N,
-                        ALPHA_MIN, ALPHA_MAX, ALPHA_N)
- """
+                        ALPHA_MIN, ALPHA_MAX, ALPHA_N) """
 
 
-for model in model_list:
+
+for model in new_models_list:
     run_inps(model)
     countdown(10)
 
