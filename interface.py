@@ -92,7 +92,6 @@ def interface_parameters_changer(K_NN_MIN, K_NN_MAX,
     return model_list
         
 
-
 def yarn_parameters_changer(E_MIN, E_MAX, E_N, MU_MIN, MU_MAX, MU_N, RHO_MIN, RHO_MAX, RHO_N, ALPHA_MIN, ALPHA_MAX, ALPHA_N):
     model_list = []
     if 'TYPE "CC3DElastIsotropic"' in Material_db:
