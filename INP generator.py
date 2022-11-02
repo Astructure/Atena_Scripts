@@ -22,7 +22,7 @@ def Material_search():
         print(Material_db[4*(i)+1], '\n', Material_db[4*(i)+2], '\n', Material_db[4*(i)+3], '\n',
         'located in Line Number {}'.format(Material_db[4*(i)]), '\n')
     return Material_db
-    
+
 
 def interface_parameters_changer(K_NN_MIN, K_NN_MAX,
                              K_NN_N, K_TT_MIN, K_TT_MAX, K_TT_N,

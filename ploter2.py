@@ -4,41 +4,75 @@ import numpy as np
 import os
 
 
-output_dir = "C:/Users/adelpasand/Desktop/p study" 
-os.chdir(output_dir)
+def inp_reader(file_path):
+    with open(file_path, 'r') as file:
+            data = file.readlines()
+    return data
 
-def model_number_spliter(ele):
-        number , name = ele.split('_', 1)
-        return int(number)
 
-if os.path.isdir(output_dir):
-       names=os.listdir(".")
-       names.sort(key=model_number_spliter)
+Monitor_dir_path = "C:/Users/adelpasand/Desktop/axi/3D axi-final load controlled - 1.5 percent strain 150 step.gid/AtenaCalculation/monitors.csv"  
+Inp_dir_path = "C:/Users/adelpasand/Desktop/axi/3D axi-final load controlled - 1.5 percent strain 150 step.gid/AtenaCalculation/3D axi-final load controlled - 1.5 percent strain 150 step.inp"  
+inp=inp_reader(Inp_dir_path)
+
+coordinates = []
+
+for lines_nums in inp:
+    if lines_nums.find('JOINT COORDINATES') != -1:
+        nodes=int(inp[inp.index(lines_nums)-1].split("=",1)[1].strip())
+        data = pd.DataFrame(inp[inp.index(lines_nums)+1:inp.index(lines_nums)+nodes+1])
+        data=data[0].str.split(expand = True)
+monitors_cols = ["A", "B", "C", "D", "E", "F", "G", "H"]
+monitors = pd.read_csv(Monitor_dir_path, sep=';', names=monitors_cols, skiprows=0)
+
+
+indices_of_node_lines = monitors['B'].str.contains('MONITOR_SET_2_INTERFACE-STRESSES', case=True, na=False)
+if monitors.index[indices_of_node_lines].size==0:
+        print("there is no monitor defined for INTERFACE-STRESSES")
 else:
-        print("there is no directory as an storage for runned-models")
-        
+        lines_nums=monitors.index[indices_of_node_lines].values
+        node_nums=pd.DataFrame(monitors['B'].values[lines_nums[0:len(lines_nums)]])
+        node_nums=pd.to_numeric(node_nums[0].str.split(pat="_", expand = True)[4])
+        interface_nodes_coord=data.iloc[node_nums]
+        x=interface_nodes_coord[2]
+        print(lines_nums)
+        print(x)
+        print(interface_nodes_coord)
+       
+
+step=int(monitors['C'].values[lines_nums[0]+2].strip())
+
+nodes_data = np.zeros((len(lines_nums), 2 + step))
+
+nodes_data[:, 0] = np.array(node_nums)
 
 
-def reader(name):
-        path = os.path.join(output_dir, name, 'AtenaCalculation', 'monitors.csv') 
-        print(name)
-        my_cols = ["A", "B", "C", "D", "E", "F", "G", "H"]
-        monitors = pd.read_csv(path, sep=';', names=my_cols, skiprows=0)
-        if monitors.index[monitors['D'].str.contains('sigma_tt', case=True, na=False)].size==0:
-                print("there is no monitor defined for sigma_tt")
+nodes_data[:, 1] = np.array(x, dtype=np.float_)
+
+for i in range(step):
+    arr = np.array(pd.DataFrame(monitors['D'].values[lines_nums[i]+7:lines_nums[i]+7+step], columns=[node_nums[i]]))
+    nodes_data[i, 2:] =np.transpose(arr)
+
+step_to_plot = 0
+x_coords = nodes_data[0]
+sigs = nodes_data[0, 2 + step_to_plot]
+
+
+# Sig_tt=pd.DataFrame(monitors['D'].values[lines_nums[0]+7:lines_nums[0]+7+step], columns=[node_nums[0]])
+
+Sig_t=pd.to_numeric(monitors['D'].values[lines_nums[0]+7:lines_nums[0]+7+step])
+Sig_n=pd.to_numeric(monitors['E'].values[lines_nums[0]+7:lines_nums[0]+7+step])
+
+
+"""         unit=''.join(monitors['D'].values[line+1]).strip()
+        step_n=int(monitors['C'][monitors.index[monitors['D'].str.contains('Step', case=True, na=False)].values[0]])
+        steps=monitors['C'].values[line+2:line+3+step_n].astype(float)
+        if ''.join(monitors['D'].values[line+2]).strip() == "NaN":
+                sigma_tt=monitors['D'].values[line+3:line+3+step_n].astype(float)
+                sigma_tt=np.insert(sigma_tt, 0, 0)
         else:
-                line=int(monitors.index[monitors['D'].str.contains('sigma_tt', case=True, na=False)].values)
-                unit=''.join(monitors['D'].values[line+1]).strip()
-                step_n=int(monitors['C'][monitors.index[monitors['B'].str.contains('Step', case=True, na=False)].values[0]])
-                steps=monitors['C'].values[line+2:line+3+step_n].astype(float)
-                if ''.join(monitors['D'].values[line+2]).strip() == "NaN":
-                        sigma_tt=monitors['D'].values[line+3:line+3+step_n].astype(float)
-                        sigma_tt=np.insert(sigma_tt, 0, 0)
-                else:
-                        sigma_tt=monitors['D'].values[line+2:line+3+step_n].astype(float)
-        return steps, sigma_tt
+                sigma_tt=monitors['D'].values[line+2:line+3+step_n].astype(float) """
         
-
+"""
 def annot_max(x,y, ax=None):
     xmax = x[np.argmax(y)]
     ymax = y.max()
@@ -121,6 +155,8 @@ for name in names[90:120:6]:
 for name in names[120:150:6]:
       steps, sigma_tt = reader(name)
       axs.plot(steps, sigma_tt, 'k')
+      
+ """
  
  
  
