@@ -12,9 +12,9 @@ def inp_reader(file_path):
     return data
 
 # assign path of monitor.csv 
-Monitor_dir_path = "C:/Users/adelpasand/Desktop/axi/axi-Diss controlled with softening in Ktt- 1mm 150 step.gid/AtenaCalculation/monitors.csv"  
+Monitor_dir_path = "C:/Users/adelpasand/Desktop/axi/axi-Diss controlled with softening in Ktt- 1mm 150 step try.gid/AtenaCalculation/monitors.csv"  
 # assign path of inp file (.inp )
-Inp_dir_path = "C:/Users/adelpasand/Desktop/axi/axi-Diss controlled with softening in Ktt- 1mm 150 step.gid/AtenaCalculation/axi-Diss controlled with softening in Ktt- 1mm 150 step.inp"  
+Inp_dir_path = "C:/Users/adelpasand/Desktop/axi/axi-Diss controlled with softening in Ktt- 1mm 150 step try.gid/AtenaCalculation/axi-Diss controlled with softening in Ktt- 1mm 150 step try.inp"  
 
 # all data included in .inp file are stored in the variable inp_data 
 inp_data=inp_reader(Inp_dir_path)
