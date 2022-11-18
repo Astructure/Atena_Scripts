@@ -52,8 +52,7 @@ def annot_max(x,y, ax=None):
     ax.annotate(text, xy=(xmax, ymax), xytext=(0.94,0.96), **kw)
 
         
-        
-        
+      
 fig, axs = plt.subplots(2, 3)
 fig.delaxes(axs[1,2])
 fig.suptitle('Max Hoop Stress evolution')
