@@ -27,8 +27,7 @@ for line in inp_data:
         node_coords=node_coords[0].str.split(expand = True)
 
 # defining columns for panda dataframe based on monitors.csv / costructing monitors dataframe which includes all data of monitors.csv
-monitors_cols = ["A", "B", "C", "D", "E", "F", "G", "H"]
-names=np.arange(0,100)
+names=np.arange(0,100) # make it better to avoid unused space
 monitors = pd.read_csv(Monitor_dir_path, sep=';', names=names, skiprows=0)           ### start here
 print(monitors)
 # extracting lines in which stresses of interface nodes are stored from that line (for all steps)
