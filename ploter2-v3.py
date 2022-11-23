@@ -29,7 +29,6 @@ for line in inp_data:
 # defining columns for panda dataframe based on monitors.csv / costructing monitors dataframe which includes all data of monitors.csv
 names=np.arange(0,100) # make it better to avoid unused space
 monitors = pd.read_csv(Monitor_dir_path, sep=';', names=names, skiprows=0)           ### start here
-print(monitors)
 # extracting lines in which stresses of interface nodes are stored from that line (for all steps)
 lines_interface_stresses=monitors.index[monitors[1].str.contains('MONITOR_SET_2_INTERFACE-STRESSES', case=True, na=False)].values
 
@@ -224,8 +223,13 @@ for n in loc_to_plot:
       dU_peaks_index = np.where((dU[1:-1] > dU[0:-2]) * (dU[1:-1] > dU[2:]))[0] + 1
       dU_peaks=dU[dU_peaks_index]
       Peaks_step=dU_peaks_index+1
-      extraticks=[125]
       ax[0].legend(prop={'size': 7}, loc='upper left')
+extraticks=[steps]
+new_xticks=list(plt.xticks()[0]) + extraticks
+new_xticks.remove(160)
+new_xticks.remove(-20)
+ax[0].set_xticks(new_xticks)
+ax[1].set_xticks(new_xticks)
 
 # plotting Tangential and Normal tresses Evolution of Interface selected nodes   
 fig, ax = plt.subplots(2)
@@ -250,6 +254,13 @@ for n in loc_to_plot:
       ax[0].plot(steps_array, Sigma_tt, label='y={} {}'.format(nodes_data[n, 1], label), linewidth=0.8, linestyle=linestyle)
       ax[1].plot(steps_array, Sigma_nn, label='y={} {}'.format(nodes_data[n, 1], label), linewidth=0.8, linestyle=linestyle)
       ax[0].legend(prop={'size': 7}, loc='upper left')
+extraticks=[steps]
+new_xticks=list(plt.xticks()[0]) + extraticks
+new_xticks.remove(160)
+new_xticks.remove(-20)
+ax[0].set_xticks(new_xticks)
+ax[1].set_xticks(new_xticks)
+
 
 
 
@@ -271,6 +282,10 @@ axs.plot(steps_array, sigma_tt)
 xmax = steps_array[np.argmax(sigma_tt)]
 ymax = sigma_tt.max()
 # axs.plot((xmax, xmax), (0, ymax), linewidth=0.4 , linestyle='dashed' , color='k')
+extraticks=[steps]
+new_xticks=list(plt.xticks()[0]) + extraticks
+new_xticks.remove(160)
+plt.xticks(new_xticks)
 X_extraticks=[xmax]
 Y_extraticks=[ymax]
 secax_x = axs.secondary_xaxis('top')
