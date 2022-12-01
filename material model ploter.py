@@ -1,5 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
+xb=0
+yb=0
+x0=0
+m=0.3
+
+xc= m*(xb**2-2*xb*x0+x0**2)/(2*m*xb-2*m*x0-yb)
+b=yb**0.5 
 
 
 ratio=2 # ratio = G_f/G_o
@@ -66,8 +73,8 @@ for i, value in enumerate(r):
 axs.legend(prop={'size': 8})
 
 ratio=[1, 1.5 ,2, 3]
-C_0= 2 
 C_ratio=1.4
+C_0= 2 
 C_1=C_ratio*C_0
 Ktt=5000
 fig, axs = plt.subplots()
@@ -135,6 +142,3 @@ props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
 axs.text(0.05, 0.95, 'E=230 GPa ; v=0.2', transform=axs.transAxes, fontsize=14,
         verticalalignment='top', bbox=props)
 plt.show()
-
- # git config --global user.email "ahmad.delpasand@gmail.com"
- # git config --global user.name "Ahmad"
