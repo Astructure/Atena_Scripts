@@ -1,32 +1,49 @@
 import matplotlib.pyplot as plt
 import numpy as np
-xb=0
-yb=0
-x0=0
-m=0.3
 
-xc= m*(xb**2-2*xb*x0+x0**2)/(2*m*xb-2*m*x0-yb)
-b=yb**0.5 
-
-
-ratio=2 # ratio = G_f/G_o
-C_0= [1,2,3]
-Ktt=5000
-fig, axs = plt.subplots()
-fig.suptitle('Interface Traction Separation Law (Gf = {} Go)'.format(ratio))
-axs.set(xlabel='Dv (sliding) (mm)', ylabel='Shear Stress (MPa)')
-for i, value in enumerate(C_0):
-    DV1=np.linspace(0,C_0[i]*1000/Ktt,10)
-    DV2=np.linspace(C_0[i]*1000/Ktt,(ratio)*C_0[i]*1000/Ktt,11)
-    DV2=np.delete(DV2,0)
-    DV=np.append(DV1, DV2)
-    tau1=np.linspace(0,C_0[i],10)
-    tau2=np.linspace(C_0[i],0,11)
-    tau2=np.delete(tau2, 0)
-    tau=np.append(tau1,tau2)
-    axs.plot(DV, tau, label='C={} , Ktt={} MN/m3'.format(value,Ktt))
-    axs.fill_between(DV1, tau1, alpha=0.05 , label='G_o={} N/m (J/m^2)'.format(C_0[i]*C_0[i]*1E6/Ktt))
-axs.legend(prop={'size': 8})
+def PS1():
+    ratio=2 # ratio = G_f/G_o #bilnear CZL
+    C_0= [1,2,3]
+    Ktt=5000
+    phi=0.3
+    fig, axs = plt.subplots()
+    fig.suptitle('Interface Traction Separation Law (Gf = {} Go)'.format(ratio))
+    axs.set(xlabel='Dv (sliding) (mm)', ylabel='Shear Stress (MPa)')
+    fig, ax = plt.subplots()
+    fig.suptitle('Threshold surface')
+    ax.set(xlabel='Normal stress (MPa)', ylabel='Tangential stress (MPa)')
+    ax.axvline(x=0 , linestyle='dashed', color='k', linewidth=0.5)
+    ax.axhline(y=0 , linestyle='dashed', color='k', linewidth=0.5)
+    #ax.grid(color='k', linestyle='-', linewidth=0.1)
+    #ax.axis('equal')
+    for i, value in enumerate(C_0):
+        DV1=np.linspace(0,C_0[i]*1000/Ktt,10)
+        DV2=np.linspace(C_0[i]*1000/Ktt,(ratio)*C_0[i]*1000/Ktt,11)
+        DV2=np.delete(DV2,0)
+        DV=np.append(DV1, DV2)
+        tau1=np.linspace(0,C_0[i],10)
+        tau2=np.linspace(C_0[i],0,11)
+        tau2=np.delete(tau2, 0)
+        tau=np.append(tau1,tau2)
+        axs.plot(DV, tau, label='C={} , Ktt={} MN/m3'.format(value,Ktt))
+        axs.fill_between(DV1, tau1, alpha=0.05 , label='G_o={} N/m (J/m^2)'.format(C_0[i]*C_0[i]*1E6/Ktt))
+        c = C_0[i]
+        ft = c
+        #ft = np.linspace(c/4,c,4)
+        #for ft in ft:
+        sigma_ell=np.linspace(0,ft,100)
+        sigma_c=-phi*ft**2/(c-2*ft*phi)
+        tau0=c/(1-(sigma_c**2/(ft-sigma_c)**2))**0.5
+        tau_ell=tau0*(1-((sigma_ell-sigma_c)/(ft-sigma_c))**2)**0.5
+        sigma_lin=np.linspace(0,-2*max(C_0),10)
+        sigma_lin=np.delete(sigma_lin,0)
+        tau_lin=c-sigma_lin*phi
+        sigma=np.append(sigma_lin,sigma_ell)
+        tau=np.append(tau_lin,tau_ell)
+        ax.plot(sigma,tau, color='b',linewidth=0.8)
+        ax.plot(sigma_ell,sigma_ell, color='b',linewidth=0.8)
+    axs.legend(prop={'size': 8})
+    return axs
 
 
 ratio=2 # ratio = G_f/G_o
