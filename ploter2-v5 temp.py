@@ -3,8 +3,9 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 import os
-from material_model_ploter import 
+from material_model_ploter import PS1
 
+PS1()
 
 # function which can read inp file
 def inp_reader(file_path):
