@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import OrderedDict
 from matplotlib.ticker import  (MultipleLocator, AutoMinorLocator, FormatStrFormatter)
-from inp_generator_v3 import *
+from inpgeneratorv3 import *
 def biliner_TSL(C_0,Ktt,ratio):
     # ratio = G_f/G_o #bilnear CZL
     DV1=np.linspace(0,C_0*1000/Ktt,10)
