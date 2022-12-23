@@ -9,31 +9,48 @@ def inp_reader(file_path):
             data = file.readlines()
     return data
 
-def Material_model_searcher():
+def inp_miner():
+    data=inp_reader(file_path)
     Material_db = []
+    Function_block_info=[]
     count_m=0
-    counter=0
+    temp_counter=0
     for line in data:
         if line.find('MATERIAL ID') != -1:
             count_m += 1
             while True:
-                counter += 1
-                end_index=data.index(line)+counter
+                temp_counter += 1
+                end_index=data.index(line)+temp_counter
                 if data[end_index].find(';') != -1:
+                    temp_counter=0
                     break
             start_index=data.index(line)
             start_line=start_index+1
             Material_db.extend([start_line, line.strip(), data[start_index+1].strip(), data[start_index+2].strip(), end_index ])
+        if line.find('FUNCTION ID 10001') != -1:
+            start_index=data.index(line)
+            while True:
+                temp_counter += 1
+                end_index=start_index+temp_counter
+                if data[end_index].find(';') != -1:
+                    break
+            Function_block_info.extend([start_index, end_index])
+        if line.find('TASK name') != -1:
+            old_inp_task_name=line.strip('TASK name')[1:-2] #usage of [1:-2] is to aviod picking " ".
     print('\n', '{} material model exist in the inp file as below:'.format(count_m), '\n')
     for i in range(count_m):
         print(Material_db[5*(i)+1], '\n', Material_db[5*(i)+2], '\n', Material_db[5*(i)+3], '\n',
         'located in Line Number {}'.format(Material_db[5*(i)]), '\n')
-    return Material_db
+    return data, Material_db, Function_block_info, old_inp_task_name
 
-def interface_parameters_changer(K_NN,K_TT,COHESION,FRICTION,FT,eitc,rdc):
-    new_models_list = []
-    all_models_name = []
-    all_models_name.append(file_path.split('\\')[-1][:-4])
+def interface_parameters_changer(new_inp_name, K_NN ,K_TT,C_0,phi,FT_0,eitc=1,rdc={}, soft_hard_fun=[]):
+    # eitc: defines elips in tension conditions: -1 means de-activating and 1 means activating
+    #                 # the ellipsoidal shape of criterion in tension, i.e. for tensile normal stress shape
+    # rdc:  defines the moving gap (reset displacement).
+    #       admissible value for rdc is -1 (top surface/line for all coresponding elements will be realigned at the end of each step)
+    #       or 1 (bottom surface/line for coresponding elementswill be realigned at the end of each step)
+    # soft_hard_fun = [Du_f, Ft_Du_f, Dv_f, C_Dv_f]
+    data, Material_db, Function_block_info, old_inp_task_name  = inp_miner()
     if 'TYPE "CC2DInterface"' in Material_db:
         count = Material_db.count('TYPE "CC2DInterface"')
         if count > 1:
@@ -48,42 +65,51 @@ def interface_parameters_changer(K_NN,K_TT,COHESION,FRICTION,FT,eitc,rdc):
         del data[Material_db[0]+2:Material_db[4]]
         data.insert(line+2, '  K_NN     {:.6e}\n'.format(K_NN))
         data.insert(line+3, '  K_TT     {:.6e}\n'.format(K_TT))
-        data.insert(line+4, '  COHESION     {:.6e}\n'.format(COHESION))
-        data.insert(line+5, '  FRICTION     {:.6e}\n'.format(FRICTION))
-        data.insert(line+6, '  FT     {:.6e}\n'.format(FT))
+        data.insert(line+4, '  COHESION     {:.6e}\n'.format(C_0))   
+        data.insert(line+5, '  FRICTION     {:.6e}\n'.format(phi))
+        data.insert(line+6, '  FT     {:.6e}\n'.format(FT_0))
         data.insert(line+7, '  K_NN_MIN     {:.6e}\n'.format(K_NN/1000))
         data.insert(line+8, '  K_TT_MIN     {:.6e}\n'.format(K_TT/1000))
-        data.insert(line+9, '  TENSION_SOFT_HARD_FUNCTION 10001\n')
-        data.insert(line+10, '  COHESION_SOFT_HARD_FUNCTION 10002\n')
-        data.insert(line+11, '  TENSION_ELIPS {}\n'.format(eitc))
-        data.insert(line+12, '  RESET_DISPLS {}\n'.format(rdc))         
+        if not soft_hard_fun:
+            data.insert(line+9, '  TENSION_ELIPS {}\n'.format(eitc))
+            if rdc:
+                data.insert(line+10, '  RESET_DISPLS {}\n'.format(rdc))
+        else:
+            data.insert(line+9, '  TENSION_SOFT_HARD_FUNCTION 10001\n')
+            data.insert(line+10, '  COHESION_SOFT_HARD_FUNCTION 10002\n')
+            data.insert(line+11, '  TENSION_ELIPS {}\n'.format(eitc))
+            if rdc:
+                data.insert(line+12, '  RESET_DISPLS {}\n'.format(rdc))
+            data.insert(Function_block_info[0], '  FUNCTION ID 10001\n')
+            data.insert(Function_block_info[0], '  NAME "TENSION_SOFT_HARD_FUNCTION Function for CC2DInterface material"\n')
+            data.insert(Function_block_info[0], '  TYPE "CCMultiLinearFunction" REMOVE_ALL\n')
+            data.insert(Function_block_info[0], '  xvalues     0.0     {}\n'.format(soft_hard_fun[0]))
+            data.insert(Function_block_info[0], '  yvalues     1.0     {}\n'.format(soft_hard_fun[1]))
+            data.insert(Function_block_info[0], 'FUNCTION ID 10002\n')
+            data.insert(Function_block_info[0], '  NAME "COHESION_SOFT_HARD_FUNCTION Function for CC2DInterface material"\n')
+            data.insert(Function_block_info[0], '  TYPE "CCMultiLinearFunction" REMOVE_ALL\n')
+            data.insert(Function_block_info[0], '  xvalues     0.0     {}\n'.format(soft_hard_fun[2]))
+            data.insert(Function_block_info[0], '  yvalues     1.0     {}\n'.format(soft_hard_fun[3]))
+            data.insert(Function_block_info[0], ' ;\n')
+        for x in data:
+            if x.find(old_inp_task_name) != -1:
+                data[data.index(x)]=data[data.index(x)].replace(old_inp_task_name, new_inp_name)
+        bat_dir = os.path.join(output_dir, new_inp_name)
+        calculation_path = os.path.join(bat_dir, "AtenaCalculation")
+        os.makedirs(calculation_path)
+        inp_path = os.path.join(calculation_path, new_inp_name+".inp")  
+        with open(inp_path, 'w') as f:
+            f.writelines(data)
+        bat_path = os.path.join(bat_dir, new_inp_name+".bat") 
+        #bat_file_content='cd AtenaCalculation\n\ncmd /K start /B "ATENA calculation" %AtenaConsole64% /M CCStructures /execute /catch_fp_instructs /o "{}.inp" "{}.out" "{}.msg" "{}.err" /num_unused_threads=2  /num_iters_per_thread=0'.format(name,name,name,name)
+        bat_file_content='cd AtenaCalculation\n\ncmd /C start /B "ATENA calculation" %AtenaConsole64% /M CCStructures /execute /catch_fp_instructs /o "{}.inp" "{}.out" "{}.msg" "{}.err" /num_unused_threads=2  /num_iters_per_thread=0'.format(new_inp_name,new_inp_name,new_inp_name,new_inp_name)
+        with open(bat_path, 'w') as f:
+            f.writelines(bat_file_content) 
+            print("output directory, inp file and bat file of the model '% s' created" % new_inp_name)
+    else:
+        print('No CC2DInterface material found in the inp file')
+            
 
-        print(data[Material_db[0]:Material_db[0]+15])
-  
-    #         name = "{}_Model_{}_{}_{}_{}_{}_{}".format(overall_counter, count1,count2,count3,count4,count5,count6)
-    #         for x in data:
-    #             if x.find(all_models_name[overall_counter-1]) != -1:
-    #                 data[data.index(x)]=data[data.index(x)].replace(all_models_name[overall_counter-1], name)
-    #         bat_dir = os.path.join(output_dir, name)
-    #         calculation_path = os.path.join(bat_dir, "AtenaCalculation")
-    #         os.makedirs(calculation_path)
-    #         inp_path = os.path.join(calculation_path, name+".inp")  
-    #         with open(inp_path, 'w') as f:
-    #             f.writelines(data)
-    #         bat_path = os.path.join(bat_dir, name+".bat") 
-    #         #bat_file_content='cd AtenaCalculation\n\ncmd /K start /B "ATENA calculation" %AtenaConsole64% /M CCStructures /execute /catch_fp_instructs /o "{}.inp" "{}.out" "{}.msg" "{}.err" /num_unused_threads=2  /num_iters_per_thread=0'.format(name,name,name,name)
-    #         bat_file_content='cd AtenaCalculation\n\ncmd /C start /B "ATENA calculation" %AtenaConsole64% /M CCStructures /execute /catch_fp_instructs /o "{}.inp" "{}.out" "{}.msg" "{}.err" /num_unused_threads=2  /num_iters_per_thread=0'.format(name,name,name,name)
-    #         with open(bat_path, 'w') as f:
-    #             f.writelines(bat_file_content) 
-    #             print("output directory, inp file and bat file of the model '% s' created" % name)
-    #     print('\n', '--------------> {} models created in total <--------------'.format(overall_counter))
-    #     print('\n')
-    # else:
-    #     print('No CC2DInterface material found in the inp file')
-    # return new_models_list
-        
-
-def yarn_parameters_changer(E_MIN, E_MAX, E_N, MU_MIN, MU_MAX, MU_N, RHO_MIN, RHO_MAX, RHO_N, ALPHA_MIN, ALPHA_MAX, ALPHA_N):
     new_models_list = []
     all_models_name = []
     all_models_name.append(file_path.split('\\')[-1][:-4])
@@ -139,8 +165,6 @@ def yarn_parameters_changer(E_MIN, E_MAX, E_N, MU_MIN, MU_MAX, MU_N, RHO_MIN, RH
         print('No CC3DElastIsotropic material found in the inp file')
     return new_models_list
 
-
-
 def run_inps(model):
     print('Simulation is running for %s' %model)
     bat_dir = os.path.join(output_dir, model)   
@@ -155,8 +179,7 @@ def run_inps(model):
             print('--------> Simulation Completed <--------','\n')
             p.stdout.flush()
             break
-        
-      
+              
 def countdown(input_time): 
     # countdown function. input should be in second. use it in the for loop over the run_inps() function to be sure that
     # all output files saved before going to the next simulation
@@ -168,10 +191,8 @@ def countdown(input_time):
         input_time -= 1
  
 
-file_path = r"C:\Users\adelpasand\Desktop\axi\3D axi bond slip law (jump and slip) with monitoring.inp"
-output_dir = "C:/Users/adelpasand/Desktop/parametric_study"   
-data=inp_reader(file_path)
-Material_db = Material_model_searcher()
+file_path = r"C:\Users\adelpasand\Desktop\axi-dec\check\test- 0.7mm 150 step.inp"
+output_dir = "C:/Users/adelpasand/Desktop/axi-dec/check_output"   
 
 
 K_NN=5000
@@ -179,41 +200,9 @@ K_TT=5000
 COHESION=2
 FRICTION=0.3
 FT=1.5
-eitc = -1
-interface_parameters_changer(K_NN,K_TT,COHESION,FRICTION,FT,eitc)
+new_inp_name='1'
+interface_parameters_changer(new_inp_name, K_NN,K_TT,COHESION,FRICTION,FT)
 
-
-
-# K_NN_MIN=5000; K_NN_MAX=10000; K_NN_N=1 # _MIN , _MAX , _N define the Min, Max and number of quantities in range including Min and Max
-# K_TT_MIN=5000; K_TT_MAX=12000; K_TT_N=5
-# COHESION_MIN=2; COHESION_MAX=6; COHESION_N=5
-# FRICTION_MIN=0.3; FRICTION_MAX=0.45; FRICTION_N=3
-# FT_MIN=1.5; FT_MAX=3; FT_N=1  #checking the validity of dependency between parameters--> dependency conditions: FT<C and FT<C/FRICTION
-# eitc = [-1,1] # elips in tension conditions: [-1] means de-activating and [1] means activating
-#                 # the ellipsoidal shape of criterion in tension, i.e. for tensile normal stress shape
-#                 # in case of [-1,1], both condition will be considered
-# new_models_list = interface_parameters_changer(K_NN_MIN, K_NN_MAX,
-#                              K_NN_N, K_TT_MIN, K_TT_MAX, K_TT_N,
-#                              COHESION_MIN, COHESION_MAX, COHESION_N,
-#                              FRICTION_MIN, FRICTION_MAX, FRICTION_N,
-#                              FT_MIN, FT_MAX, FT_N,
-#                              eitc)
-
-
-# E_MIN=25000; E_MAX=30000; E_N=3
-# MU_MIN= 0.25; MU_MAX= 0.35; MU_N=1
-# RHO_MIN=0; RHO_MAX=0; RHO_N=1
-# ALPHA_MIN=0; ALPHA_MAX=0; ALPHA_N=1
-# """ new_models_list = yarn_parameters_changer(E_MIN, E_MAX, E_N,
-#                         MU_MIN, MU_MAX, MU_N,
-#                         RHO_MIN, RHO_MAX, RHO_N,
-#                         ALPHA_MIN, ALPHA_MAX, ALPHA_N) """
-
-
-
-# for model in new_models_list:
-#     run_inps(model)
-#     countdown(10)
 
 
 
