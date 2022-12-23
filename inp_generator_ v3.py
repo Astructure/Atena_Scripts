@@ -1,3 +1,4 @@
+
 import numpy as np
 import os
 import subprocess
@@ -195,13 +196,13 @@ file_path = r"C:\Users\adelpasand\Desktop\axi-dec\check\test- 0.7mm 150 step.inp
 output_dir = "C:/Users/adelpasand/Desktop/axi-dec/check_output"   
 
 
-K_NN=5000
-K_TT=5000
-COHESION=2
-FRICTION=0.3
-FT=1.5
-new_inp_name='1'
-interface_parameters_changer(new_inp_name, K_NN,K_TT,COHESION,FRICTION,FT)
+# K_NN=5000
+# K_TT=5000
+# COHESION=2
+# FRICTION=0.3
+# FT=1.5
+# new_inp_name='1'
+# interface_parameters_changer(new_inp_name, K_NN,K_TT,COHESION,FRICTION,FT)
 
 
 

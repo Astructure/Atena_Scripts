@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import OrderedDict
 from matplotlib.ticker import  (MultipleLocator, AutoMinorLocator, FormatStrFormatter)
-from INP generator v2+ softening import *
 
 def biliner_TSL(C_0,Ktt,ratio):
     # ratio = G_f/G_o #bilnear CZL
@@ -180,7 +179,7 @@ def PS1():
     fig1, ax1, axins1, axins2 = figs()
     for i, value in enumerate(C_0):
         c , ft = C_0[i], ft_0[i]
-        interface_parameters_changer(i+1, Knn,Ktt,c,phi,ft)
+        #interface_parameters_changer(i+1, Knn,Ktt,c,phi,ft)
         bilin_TSL_ploter(fig1, ax1, c, Ktt, ratio, hatch='false', legend='off')
         threshold_ploter(fig1, axins1, c, ft, phi, max(C_0))
     path_ploter(axins1, ft_0, C_0)
