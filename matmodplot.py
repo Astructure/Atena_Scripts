@@ -3,7 +3,8 @@ import numpy as np
 import os
 from collections import OrderedDict
 from matplotlib.ticker import  (MultipleLocator, AutoMinorLocator, FormatStrFormatter)
-from inpgenrun import *
+
+# function block related to interface material model (CZM) 
 
 def biliner_TSL(C_0,Ktt,ratio):
     # ratio = G_f/G_o #bilnear CZL
@@ -177,32 +178,21 @@ def savefig_nomargin(output_dir, name):
     plt.savefig(os.path.join(output_dir, my_file), bbox_inches = 'tight' , pad_inches = 0)   
     plt.tight_layout()
 
-    
+# function block related to FRP Yarn material model
 
-
-
-
-
-
-fig, axs = plt.subplots()
-fig.suptitle('FRP yarn material model')
-axs.set(xlabel='strain (%)', ylabel='Stress (GPa)')
-Ft= 3.3
-E=230
-strain=np.linspace(0,Ft/E,10)*100
-Stress=np.linspace(0,Ft,10)
-axs.plot(strain, Stress)
-xmax = strain.max()
-ymax = Stress.max()
-X_extraticks=[xmax]
-Y_extraticks=[ymax]
-secax_x = axs.secondary_xaxis('top')
-secax_x.set_xticks(X_extraticks)
-secax_y = axs.secondary_yaxis('right')
-secax_y.set_yticks(Y_extraticks)
-props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-axs.text(0.05, 0.95, 'E=230 GPa ; v=0.2', transform=axs.transAxes, fontsize=14,
-        verticalalignment='top', bbox=props)
-
-
-plt.show()
+def frp_yarn_plotter(ax, Ft=3.3, E=230, nu=0.3):
+    ax.set(xlabel='strain (%)', ylabel='Stress (GPa)')
+    strain=np.linspace(0,Ft/E,10)*100
+    Stress=np.linspace(0,Ft,10)
+    ax.plot(strain, Stress)
+    xmax = strain.max()
+    ymax = Stress.max()
+    X_extraticks=[xmax]
+    Y_extraticks=[ymax]
+    secax_x = ax.secondary_xaxis('top')
+    secax_x.set_xticks(X_extraticks)
+    secax_y = ax.secondary_yaxis('right')
+    secax_y.set_yticks(Y_extraticks)
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+    ax.text(0.05, 0.95, 'E={} GPa ; v={}'.format(E, nu), transform=ax.transAxes, fontsize=8,
+            verticalalignment='top', bbox=props)

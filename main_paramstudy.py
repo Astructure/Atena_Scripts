@@ -12,7 +12,7 @@ def PS1():
     N_ratio=2
     fig1, ax1, axins1, axins2 = figs()
     current_inp_path = r"C:\Users\adelpasand\Desktop\axi-dec\axi-Diss controlled with softening in Ktt- 0.7mm 150 step.gid\AtenaCalculation\axi-Diss controlled with softening in Ktt- 0.7mm 150 step.inp"
-    output_dir = "C:/Users/adelpasand/Desktop/axi-dec/PS1"
+    output_dir = "C:/Users/adelpasand/Desktop/paramstudy/PS1"
    
     Du_f, Ft_Du_f = N_TSL_ploter(axins2, ft_0[0], Knn, N_ratio)
     for i, value in enumerate(C_0):
@@ -35,7 +35,7 @@ def PS2():
     N_ratio=2
     fig1, ax1, axins1, axins2  = figs(axins_dim1=[0.8, 0.79, 0.18, 0.18],axins_dim2=[0.8, 0.52, 0.18, 0.18])
     current_inp_path = r"C:\Users\adelpasand\Desktop\axi-dec\axi-Diss controlled with softening in Ktt- 0.7mm 150 step.gid\AtenaCalculation\axi-Diss controlled with softening in Ktt- 0.7mm 150 step.inp"
-    output_dir = "C:/Users/adelpasand/Desktop/axi-dec/PS2"
+    output_dir = "C:/Users/adelpasand/Desktop/paramstudy/PS2"
     Du_f, Ft_Du_f = N_TSL_ploter(axins2, ft, Knn, N_ratio)
     for i, value in enumerate(Ktt):
         Dv_f, C_Dv_f = bilin_TSL_ploter(fig1, ax1, c, value, ratio, hatch='false', legend='off')
@@ -59,7 +59,7 @@ def PS3():
     N_ratio=2
     fig1, ax1, axins1, axins2  = figs()
     current_inp_path = r"C:\Users\adelpasand\Desktop\axi-dec\axi-Diss controlled with softening in Ktt- 0.7mm 150 step.gid\AtenaCalculation\axi-Diss controlled with softening in Ktt- 0.7mm 150 step.inp"
-    output_dir = "C:/Users/adelpasand/Desktop/axi-dec/PS3"
+    output_dir = "C:/Users/adelpasand/Desktop/paramstudy/PS3"
     Du_f, Ft_Du_f = N_TSL_ploter(axins2, ft_0[0], Knn, N_ratio)
     for i, value in enumerate(r):
         c, ktt,ft = C_0[i], Ktt[i], ft_0[i]
@@ -82,7 +82,7 @@ def PS4():
     N_ratio=2
     fig1, ax1, axins1, axins2  = figs()
     current_inp_path = r"C:\Users\adelpasand\Desktop\axi-dec\axi-Diss controlled with softening in Ktt- 0.7mm 150 step.gid\AtenaCalculation\axi-Diss controlled with softening in Ktt- 0.7mm 150 step.inp"
-    output_dir = "C:/Users/adelpasand/Desktop/axi-dec/PS4"
+    output_dir = "C:/Users/adelpasand/Desktop/paramstudy/PS4"
     Du_f, Ft_Du_f = N_TSL_ploter(axins2, ft, Knn, N_ratio)
     for i, value in enumerate(ratio):
             Dv_f, C_Dv_f = bilin_TSL_ploter(fig1, ax1, C_0, ktt, value)
@@ -98,4 +98,8 @@ def PS4():
     savefig_nomargin(output_dir,'PS4')
  
 
-PS4() 
+PS1() 
+# PS2() 
+# PS3() 
+# PS4() 
+
