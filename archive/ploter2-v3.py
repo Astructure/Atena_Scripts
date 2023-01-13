@@ -12,9 +12,9 @@ def inp_reader(file_path):
     return data
 
 # assign path of monitor.csv 
-Monitor_dir_path = "C:/Users/adelpasand/Desktop/models/axi-Diss controlled with softening in Ktt- 1mm 150 step C 2 .gid/AtenaCalculation/monitors.csv"  
+Monitor_dir_path = "C:/Users/adelpasand/Desktop/Dec-paramstudy/PS1/1/AtenaCalculation/monitors.csv"  
 # assign path of inp file (.inp )
-Inp_dir_path = "C:/Users/adelpasand/Desktop/models/axi-Diss controlled with softening in Ktt- 1mm 150 step C 2 .gid/AtenaCalculation/axi-Diss controlled with softening in Ktt- 1mm 150 step try2.inp"  
+Inp_dir_path = "C:/Users/adelpasand/Desktop/Dec-paramstudy/PS1/1//AtenaCalculation/1.inp"  
 
 # all data included in .inp file are stored in the variable inp_data 
 inp_data=inp_reader(Inp_dir_path)
@@ -126,7 +126,7 @@ fig.suptitle('Relative Opening of Interface')
 axs[0].set_title('with respect to fixed end')
 axs[1].set_title('with respect to loaded end')
 axs[1].set(xlabel='Interface Length (cm)', ylabel='mm')
-axs[0].set(ylabel='mm') 
+axs[0].set(ylabel='mm')
 fig.set_figheight(7)
 fig.set_figwidth(7)
 for s in step_to_plot:
@@ -203,35 +203,21 @@ ax[1].set_title('Normal Relative Displacements Evolution in a point of Interface
 ax[0].set_title('Tangential Relative Displacements Evolution in a point of Interface')
 fig.set_figheight(7)
 fig.set_figwidth(7)
-
+last_decohesion_loc=np.where(nodes_data[:,1+steps]==0)[0][0]
 first_decohesion_loc=np.where(nodes_data[:, 0] == nodes_data[-1, 0])[0][0] # first_decohesion_loc = loaded_end_loc
-decohesion_locs=np.where(nodes_data[:,1+steps]==0)[0]
-print(decohesion_locs.size)
-
-if decohesion_locs.size == 0:
-    last_decohesion_loc=[]
-    loc_to_plot=[first_decohesion_loc, 0, first_decohesion_loc-4]
-
-else:
-    last_decohesion_loc=np.where(nodes_data[:,1+steps]==0)[0][0]
-    loc_to_plot=[first_decohesion_loc, last_decohesion_loc, 0, int((last_decohesion_loc+first_decohesion_loc)/2),int((0+last_decohesion_loc)/2), first_decohesion_loc-4]
-   
+loc_to_plot=[first_decohesion_loc, last_decohesion_loc, 0, int((last_decohesion_loc+first_decohesion_loc)/2),int((0+last_decohesion_loc)/2), first_decohesion_loc-4]
 loc_to_plot.sort()
 for n in loc_to_plot:
       dU = nodes_data[n, 2 + 3*steps:]
       dU = np.insert(dU, 0, 0)
       dV = nodes_data[n, 2+2*steps:2+3*steps]
       dV = np.insert(dV, 0, 0)
-      
-      """ if n==first_decohesion_loc: label=': loaded_end_loc = first_decohesion_loc'
+      if n==first_decohesion_loc: label=': loaded_end_loc = first_decohesion_loc'
       elif  n==last_decohesion_loc: label=': last_decohesion_loc'
       elif  n==0: label='fixed_end_loc'
       else: label=''
       if n < last_decohesion_loc: linestyle='dashed'
-      else: linestyle='solid' """
-      
-      label=''
-      linestyle='solid'
+      else: linestyle='solid'
       ax[1].plot(steps_array, dU*1000, label='y={} {}'.format(nodes_data[n, 1], label), linewidth=0.8, linestyle=linestyle)
       ax[0].plot(steps_array, dV*1000, label='y={} {}'.format(nodes_data[n, 1], label), linewidth=0.8, linestyle=linestyle)
       dU_peaks_index = np.where((dU[1:-1] > dU[0:-2]) * (dU[1:-1] > dU[2:]))[0] + 1
@@ -259,15 +245,12 @@ for n in loc_to_plot:
       Sigma_tt = np.insert(Sigma_tt, 0, 0)
       Sigma_nn = nodes_data[n, 2+steps:2+2*steps]
       Sigma_nn = np.insert(Sigma_nn, 0, 0)
-      """ if n==first_decohesion_loc: label=': loaded_end_loc = first_decohesion_loc'
+      if n==first_decohesion_loc: label=': loaded_end_loc = first_decohesion_loc'
       elif  n==last_decohesion_loc: label=': last_decohesion_loc'
       elif  n==0: label='fixed_end_loc'
       else: label=''
       if n < last_decohesion_loc: linestyle='dashed'
-      else: linestyle='solid' """
-      
-      label=''
-      linestyle='solid'
+      else: linestyle='solid'
       ax[0].plot(steps_array, Sigma_tt, label='y={} {}'.format(nodes_data[n, 1], label), linewidth=0.8, linestyle=linestyle)
       ax[1].plot(steps_array, Sigma_nn, label='y={} {}'.format(nodes_data[n, 1], label), linewidth=0.8, linestyle=linestyle)
       ax[0].legend(prop={'size': 7}, loc='upper left')
@@ -309,7 +292,7 @@ secax_y = axs.secondary_yaxis('right')
 secax_y.set_yticks(Y_extraticks)
 
 # plotting pullout curve
-if monitors.index[monitors[1].str.contains('CON_REACTION', case=True, na=False)].size==0:
+""" if monitors.index[monitors[1].str.contains('CON_REACTION', case=True, na=False)].size==0:
       print("there is no monitor defined for reaction of concrete's fixed end")
 else:
       line=int(monitors.index[monitors[1].str.contains('CON_REACTION', case=True, na=False)].values)
@@ -336,11 +319,11 @@ Y_extraticks=[ymax]
 secax_x = axs.secondary_xaxis('top')
 secax_x.set_xticks(X_extraticks)
 secax_y = axs.secondary_yaxis('right')
-secax_y.set_yticks(Y_extraticks)
+secax_y.set_yticks(Y_extraticks) """
 
 
 # plotting YARN_TENSILE_STRESS
-if monitors.index[monitors[1].str.contains('YARN_TENSILE_STRESS', case=True, na=False)].size==0:
+""" if monitors.index[monitors[1].str.contains('YARN_TENSILE_STRESS', case=True, na=False)].size==0:
       print("there is no monitor defined for reaction of concrete's fixed end")
 else:
       line=int(monitors.index[monitors[1].str.contains('YARN_TENSILE_STRESS', case=True, na=False)].values)
@@ -351,12 +334,11 @@ else:
       else:
             Yarn_M_S=monitors[3].values[line+6:line+6+steps].astype(float)
 fig, axs = plt.subplots()
-fig.suptitle('Max Tensile Stress In Yarn')
+fig.suptitle('Max tensile Stress In Yarn')
 axs.set(xlabel='Load Steps', ylabel='Stress (MPa)')
-axs.plot(steps_array, Yarn_M_S)
-#acceptable_step=next(x[0] for x in enumerate(Yarn_M_S) if x[1] > 3300)-1
-xmax = steps_array[np.argmax(Yarn_M_S)]
-ymax = (Yarn_M_S).max()
+axs.plot(steps_array, -Yarn_M_S*1000)
+xmax = steps_array[np.argmax(-Yarn_M_S)]
+ymax = (-Yarn_M_S*1000).max()
 # axs.plot((xmax, xmax), (0, ymax), linewidth=0.4 , linestyle='dashed' , color='k')
 extraticks=[steps]
 new_xticks=list(plt.xticks()[0]) + extraticks
@@ -368,6 +350,6 @@ Y_extraticks=[ymax]
 secax_x = axs.secondary_xaxis('top')
 secax_x.set_xticks(X_extraticks)
 secax_y = axs.secondary_yaxis('right')
-secax_y.set_yticks(Y_extraticks)
+secax_y.set_yticks(Y_extraticks) """
 
 plt.show()

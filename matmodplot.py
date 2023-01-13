@@ -18,11 +18,11 @@ def biliner_TSL(C_0,Ktt,ratio):
     tau=np.append(tau1,tau2)
     return DV, DV1, tau, tau1
 
-def bilin_TSL_ploter(fig, ax, C_0, Ktt, ratio, hatch ='false', legend='off'):
+def bilin_TSL_ploter(fig, ax, C_0, Ktt, ratio, hatch ='false', legend='off', linewidth=[1.5]):
     DV,DV1,tau,tau1 = biliner_TSL(C_0,Ktt,ratio)
     Dv_f, C_Dv_f = DV[-1], tau[-1]
     ax.plot(DV*1000, tau, label='C0={} MPa , Ktt={} MN/m3, Gf/Go = {}'.format(C_0, 
-        int(Ktt) if float(Ktt).is_integer() else "{:.2f}".format(Ktt), ratio))
+        int(Ktt) if float(Ktt).is_integer() else "{:.2f}".format(Ktt), ratio), linewidth=linewidth)
     if hatch =='true':
         ax.fill_between(DV1, tau1, alpha=0.25 , label='G_o={} N/m (J/m^2)'.format(C_0*C_0*1E6/Ktt))
     if legend=='on':
