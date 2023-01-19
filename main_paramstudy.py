@@ -150,7 +150,6 @@ def Vast_PS(name, current_inp_path):
     print('parametric study {}: plotting(.pdf) interface material models for parametric study and Generating corresponding inp and bat file'. format(name))
     savefig_nomargin(PS_dir, name)
     
-
 def runallmodels(output_dir):
     paramstudies = subfolder_name_reader(output_dir)  
     for PS in paramstudies:
@@ -158,13 +157,13 @@ def runallmodels(output_dir):
         Simulations_name = subfolder_name_reader(ps_path)
         Simulations_name=list(map(int, Simulations_name))
         Simulations_name=sorted(Simulations_name)
+        Simulations_name=Simulations_name[208:]
         Simulations_name=list(map(str, Simulations_name))
         for sn in Simulations_name:
             path = os.path.join(ps_path, sn)
             print(path)
             run_inps(path, sn)
             for i in range(1,151):
-                print(f"{i:04}") 
                 path_to_del = os.path.join(path, "AtenaCalculation/{}.{:04}".format(sn,i))
                 os.remove(path_to_del)
             countdown(10)
@@ -184,6 +183,6 @@ current_inp_path = r"C:\Users\adelpasand\Desktop\axi-dec\axi-Diss controlled wit
 
 runallmodels(output_dir)
 
-#psresultploter(output_dir)
-#runoverall_simresultploter_part1(output_dir)
+psresultploter(output_dir)
+runoverall_simresultploter_part1(output_dir)
 
