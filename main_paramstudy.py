@@ -86,9 +86,9 @@ def PS4(name, current_inp_path):
             else:
                 interface_parameters_changer(current_inp_path, PS_dir, str(i+1), Knn,ktt,C_0,phi,ft, Ft_soft_hard_fun=[Du_f, Ft_Du_f], C_soft_hard_fun=[Dv_f, C_Dv_f])
     Dv_f, C_Dv_f = plateau_TSL_ploter(fig1, ax1, C_0, ktt, 2*ratio[-1]-1)
-    interface_parameters_changer(current_inp_path, PS_dir, '5', Knn,ktt,C_0,phi,ft, soft_hard_fun = [Du_f, Ft_Du_f, Dv_f, C_Dv_f])
+    interface_parameters_changer(current_inp_path, PS_dir, '5', Knn,ktt,C_0,phi,ft, Ft_soft_hard_fun=[Du_f, Ft_Du_f], C_soft_hard_fun=[Dv_f, C_Dv_f])
     Dv_f, C_Dv_f = hardening_TSL_ploter(fig1, ax1, C_0, ktt, H, H/ktt*(ratio[-1]-1)**2+(2*ratio[-1]-1), hatch='false', legend='off')
-    interface_parameters_changer(current_inp_path, PS_dir, '6', Knn, ktt, C_0, phi, ft, soft_hard_fun = [Du_f, Ft_Du_f, Dv_f, C_Dv_f])
+    interface_parameters_changer(current_inp_path, PS_dir, '6', Knn, ktt, C_0, phi, ft, Ft_soft_hard_fun=[Du_f, Ft_Du_f], C_soft_hard_fun=[Dv_f, C_Dv_f])
     threshold_ploter(fig1, axins1, C_0, ft, phi,C_0)
     savefig_nomargin(PS_dir, name)
 
@@ -127,7 +127,7 @@ def Vast_PS(name, current_inp_path):
     phi=0.3
     C_0= [1,2,3]
     DV_e= np.around(np.arange(0.0001,0.0013,0.0001),6)
-    ax_fontsize  = 8
+    ax_fontsize  = 12
     plt.rcParams.update({'font.size': ax_fontsize})
     fig1, ax1 = plt.subplots()
     ax1.set(xlabel='Dv (sliding (mm)) ', ylabel='Shear Stress (MPa)')
@@ -147,6 +147,40 @@ def Vast_PS(name, current_inp_path):
                     interface_parameters_changer(current_inp_path, PS_dir, str(index), Knn,ktt,C_0[i],phi,ft_0, Ft_soft_hard_fun=[Du_f, Ft_Du_f])
                 else:
                     interface_parameters_changer(current_inp_path, PS_dir, str(index), Knn,ktt,C_0[i],phi,ft_0, Ft_soft_hard_fun=[Du_f, Ft_Du_f], C_soft_hard_fun=[Dv_f_value, C_Dv_f])
+    print('parametric study {}: plotting(.pdf) interface material models for parametric study and Generating corresponding inp and bat file'. format(name))
+    savefig_nomargin(PS_dir, name)    
+    
+def Verify_PS(name, current_inp_path):
+    index=0
+    material_mu =np.array([[1.5, 0.00062, 0.00085],
+                [1.5, 0.00062, 0.00093],
+                [2.5, 0.00062, 0.00085],
+                [2.5, 0.00062, 0.00093],
+                [2.75, 0.00105 ,0.00113]])
+    fig1, ax1 = plt.subplots()
+    ax_fontsize  = 12
+    plt.rcParams.update({'font.size': ax_fontsize})
+    ax1.set(xlabel='Dv (sliding (mm)) ', ylabel='Shear Stress (MPa)')
+    for m , value in enumerate (material_mu[0:5]):
+        index += 1
+        C_0=material_mu[m,0]
+        DV_e=material_mu[m,1]
+        Dv_f=material_mu[m,2]
+        ft_0=1
+        Knn=5000
+        N_ratio=6
+        phi=0.3
+        DU, sigma = N_TSL(ft_0, Knn, N_ratio)
+        Du_f, Ft_Du_f =  DU[-1], sigma[-1]
+        PS_dir = os.path.join(output_dir, name)
+        ktt=C_0/DV_e
+        ratio=ktt*Dv_f/C_0
+        Dv_f, C_Dv_f = bilin_TSL_ploter(fig1, ax1, C_0, ktt, ratio , hatch='false', legend='off', linewidth=0.5)  
+        #threshold_ploter(fig1, axins1, C_0[i], ft_0, phi, max(C_0))
+        if ratio==1:
+            interface_parameters_changer(current_inp_path, PS_dir, str(index), Knn,ktt,C_0,phi,ft_0, Ft_soft_hard_fun=[Du_f, Ft_Du_f])
+        else:
+            interface_parameters_changer(current_inp_path, PS_dir, str(index), Knn,ktt,C_0,phi,ft_0, Ft_soft_hard_fun=[Du_f, Ft_Du_f], C_soft_hard_fun=[Dv_f, C_Dv_f])
     print('parametric study {}: plotting(.pdf) interface material models for parametric study and Generating corresponding inp and bat file'. format(name))
     savefig_nomargin(PS_dir, name)
     
@@ -169,7 +203,7 @@ def runallmodels(output_dir):
             countdown(10)
 
 
-output_dir = "C:/Users/adelpasand/Desktop/Vast-PS"
+output_dir = "C:/Users/adelpasand/Desktop/new-jan-PS/"
 current_inp_path = r"C:\Users\adelpasand\Desktop\axi-dec\axi-Diss controlled with softening in Ktt- 0.7mm 150 step.gid\AtenaCalculation\axi-Diss controlled with softening in Ktt- 0.7mm 150 step.inp"
 
 # PS1('PS1', current_inp_path) 
@@ -180,9 +214,10 @@ current_inp_path = r"C:\Users\adelpasand\Desktop\axi-dec\axi-Diss controlled wit
 
 #Vast_PS('Vast_PS', current_inp_path)
 
+#Verify_PS('Verify_PS', current_inp_path)
 
-runallmodels(output_dir)
+#runallmodels(output_dir)
 
-psresultploter(output_dir)
+# psresultploter(output_dir)
 runoverall_simresultploter_part1(output_dir)
 

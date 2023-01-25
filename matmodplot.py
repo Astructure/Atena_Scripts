@@ -18,7 +18,7 @@ def biliner_TSL(C_0,Ktt,ratio):
     tau=np.append(tau1,tau2)
     return DV, DV1, tau, tau1
 
-def bilin_TSL_ploter(fig, ax, C_0, Ktt, ratio, hatch ='false', legend='off', linewidth=[1.5]):
+def bilin_TSL_ploter(fig, ax, C_0, Ktt, ratio, hatch ='false', legend='off', linewidth=1.5):
     DV,DV1,tau,tau1 = biliner_TSL(C_0,Ktt,ratio)
     Dv_f, C_Dv_f = DV[-1], tau[-1]
     ax.plot(DV*1000, tau, label='C0={} MPa , Ktt={} MN/m3, Gf/Go = {}'.format(C_0, 
@@ -29,7 +29,7 @@ def bilin_TSL_ploter(fig, ax, C_0, Ktt, ratio, hatch ='false', legend='off', lin
         box = ax.get_position()
         ax.set_position([box.x0, box.y0 + box.height * 0.05,
                     box.width, box.height * 0.95])
-        ax.legend(prop={'size': 6}, loc='upper center', bbox_to_anchor=(0.5, -0.15),
+        ax.legend(prop={'size': 10}, loc='upper center', bbox_to_anchor=(0.5, -0.15),
             fancybox=True, shadow=True, ncol=2, borderaxespad=0)   
     return Dv_f, C_Dv_f
 
@@ -56,7 +56,7 @@ def plateau_TSL_ploter(fig, ax, C_0, Ktt, ratio, hatch='false', legend='off'):
         box = ax.get_position()
         ax.set_position([box.x0, box.y0 + box.height * 0.05,
                     box.width, box.height * 0.95])
-        ax.legend(prop={'size': 6}, loc='upper center', bbox_to_anchor=(0.5, -0.25),
+        ax.legend(prop={'size': 10}, loc='upper center', bbox_to_anchor=(0.5, -0.25),
             fancybox=True, shadow=True, ncol=2)          
     return Dv_f, C_Dv_f
     
@@ -84,7 +84,7 @@ def hardening_TSL_ploter(fig, ax, C_0, Ktt, H, ratio, hatch='false', legend='off
         box = ax.get_position()
         ax.set_position([box.x0, box.y0 + box.height * 0.05,
                     box.width, box.height * 0.95])
-        ax.legend(prop={'size': 6}, loc='upper center', bbox_to_anchor=(0.5, -0.15),
+        ax.legend(prop={'size': 10}, loc='upper center', bbox_to_anchor=(0.5, -0.15),
             fancybox=True, shadow=True, ncol=2)         
     return Dv_f, C_Dv_f
      
@@ -141,38 +141,41 @@ def N_TSL_ploter(ax, F_t, Knn, N_ratio, legend='off'):
     ax.plot(DU*1000, sigma, label='F_t={} MPa, Knn={} MN/m3, ratio={}'.format(F_t,
         int(Knn) if float(Knn).is_integer() else '{:.2f}'.format(Knn), N_ratio))
     if legend=='on':
-        ax.legend(prop={'size': 8})   
+        ax.legend(prop={'size': 10})   
     return Du_f, Ft_Du_f
     
-def figs(axins_dim1=[0.06, 0.79, 0.18, 0.18],axins_dim2=[0.06, 0.52, 0.18, 0.18]):
-    ax_fontsize , axin_fontsize = 8, 5
+    # figs(axins_dim1=[0.08, 0.80, 0.16, 0.16],axins_dim2=[0.08, 0.54, 0.16, 0.16])
+    # figs(axins_dim2=[0.3, 0.1, 0.16, 0.16],axins_dim1=[0.6, 0.1, 0.16, 0.16])
+def figs(axins_dim1=[0.08, 0.80, 0.16, 0.16],axins_dim2=[0.08, 0.54, 0.16, 0.16]):
+    ax_fontsize , axin_fontsize = 16, 9
     plt.rcParams.update({'font.size': ax_fontsize})
-    fig1, ax1 = plt.subplots()
+    fig1, ax1 = plt.subplots(figsize=(5.5, 4.5))
     #fig1.suptitle('Interface Traction Separation Law')
     ax1.set(xlabel='Dv (sliding (mm)) ', ylabel='Shear Stress (MPa)')
     #ax1.grid(color='k', linewidth=0.1)
     plt.rcParams.update({'font.size': axin_fontsize})
     axins1 = ax1.inset_axes(axins_dim1)
-    axins1.set_xlabel(xlabel='Normal stress (MPa)', labelpad=0)
-    axins1.set_ylabel(ylabel='Tangential stress (MPa)', labelpad=0)
+    axins1.set_xlabel(xlabel='Normal stress', labelpad=0)
+    axins1.set_ylabel(ylabel='Tangential stress', labelpad=0)
     axins1.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
     #axins1.set_ymargin(0)
     #axins1.grid(color='k', linewidth=0.1)
     #axins1.axis('equal')
     #axins1.set_title('Threshold surface') 
     axins2 = ax1.inset_axes(axins_dim2)
-    axins2.set_xlabel(xlabel='Du (Opening (mm))', labelpad=0)
-    axins2.set_ylabel(ylabel='Normal Stress (MPa)' , labelpad=0 )
+    axins2.set_xlabel(xlabel='Du (Opening)', labelpad=0)
+    axins2.set_ylabel(ylabel='Normal Stress' , labelpad=0 )
     axins1.xaxis.set_major_locator(MultipleLocator(1))
     axins1.yaxis.set_major_locator(MultipleLocator(1))
-    axins2.xaxis.set_major_locator(MultipleLocator(0.2))
+    axins2.xaxis.set_major_locator(MultipleLocator(0.4))
     axins2.yaxis.set_major_locator(MultipleLocator(0.5))
     plt.rcParams.update({'font.size': ax_fontsize})
     return fig1, ax1, axins1, axins2
 
+
 def savefig_nomargin(output_dir, name):
     plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, 
-                 hspace = 0, wspace = 0)
+                 hspace = 0.15, wspace = 0)
     plt.margins(0,0)
     my_file = "{}.pdf".format(name)
     plt.savefig(os.path.join(output_dir, my_file), bbox_inches = 'tight' , pad_inches = 0)   
@@ -194,5 +197,5 @@ def frp_yarn_plotter(ax, Ft=3.3, E=230, nu=0.3):
     secax_y = ax.secondary_yaxis('right')
     secax_y.set_yticks(Y_extraticks)
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-    ax.text(0.05, 0.95, 'E={} GPa ; v={}'.format(E, nu), transform=ax.transAxes, fontsize=8,
+    ax.text(0.05, 0.95, 'E={} GPa ; v={}'.format(E, nu), transform=ax.transAxes, fontsize=10,
             verticalalignment='top', bbox=props)

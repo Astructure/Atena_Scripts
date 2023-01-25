@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from collections import Counter
-from matplotlib.ticker import  MultipleLocator
+from matplotlib.ticker import  MultipleLocator, FormatStrFormatter
 from matmodplot import savefig_nomargin
 import numpy as np
 import os
@@ -93,8 +93,8 @@ def simresultploter_part1(path):
       
       ######################################################################################################
       # plot 1: plotting Tangential and Normal Stress profile along the interface
-      plt.rcParams.update({'font.size': 6})
-      fig, axs = plt.subplots(2,1, sharex=True)
+      plt.rcParams.update({'font.size': 16})
+      fig, axs = plt.subplots(2,1, sharex=True,figsize=(6, 6))
             #fig.suptitle('Stress profile along the interface')
             #axs[0].set_title('Interface Tangential Stress')
             #axs[1].set_title('Interface Normal Stress ')
@@ -124,13 +124,13 @@ def simresultploter_part1(path):
             label, linestyle=label_linewidth(s)
             axs[0].plot(x_coords*100, Sigma_tt, label=label, linewidth=0.8, linestyle=linestyle)
             axs[1].plot(x_coords*100, Sigma_nn, label=label, linewidth=0.8, linestyle=linestyle)
-      axs[0].legend(prop={'size': 6}, loc='upper left')
+      axs[0].legend(prop={'size': 10}, loc='upper left')
       savefig_nomargin(path, '1-Stress profile along the interface')
       plt.close(fig)
       
       ######################################################################################################
       # plot 2: plotting Tangential and Normal Relative Displacements profile along the Interface
-      fig, axs = plt.subplots(2,1, sharex=True)
+      fig, axs = plt.subplots(2,1, sharex=True,figsize=(6, 6))
       #fig.suptitle('Relative Displacements profile along the Interface')
       #axs[1].set_title('Normal Relative Displacement (opening)')
       #axs[0].set_title('Tangential Relative Displacements (sliding)')
@@ -142,13 +142,13 @@ def simresultploter_part1(path):
             label, linestyle=label_linewidth(s)
             axs[1].plot(x_coords*100, dU*1000, label=label ,linewidth=0.8, linestyle=linestyle)
             axs[0].plot(x_coords*100, dV*1000, label=label ,linewidth=0.8, linestyle=linestyle)
-      axs[0].legend(prop={'size': 6}, loc='upper left')
+      axs[0].legend(prop={'size': 10}, loc='upper left')
       savefig_nomargin(path, '2-Relative Displacements profile along the Interface')
       plt.close(fig)
       
       ######################################################################################################
       # plot 3: plotting Relative Opening of Interface with respect to fixed end and with respect to loaded end'
-      fig, axs = plt.subplots(2,1, sharex=True)
+      fig, axs = plt.subplots(2,1, sharex=True,figsize=(6, 6))
       #fig.suptitle('Relative Opening of Interface')
       #axs[0].set_title('with respect to fixed end')
       #axs[1].set_title('with respect to loaded end')
@@ -160,13 +160,13 @@ def simresultploter_part1(path):
             label, linestyle=label_linewidth(s)
             axs[0].plot(x_coords*100, startshifted_dU, label=label , linewidth=0.8 , linestyle=linestyle)
             axs[1].plot(x_coords*100, endshifted_dU, label=label , linewidth=0.8, linestyle=linestyle)
-      axs[0].legend(prop={'size': 6}, loc='upper left')
+      axs[0].legend(prop={'size': 10}, loc='upper left')
       savefig_nomargin(path, '3-Relative Opening of Interface')
       plt.close(fig)
       
       ######################################################################################################
       # plot 4: plotting Normalized Opening of Interface with respect to fixed end and with respect to loaded end'
-      fig, axs = plt.subplots(2,1, sharex=True)
+      fig, axs = plt.subplots(2,1, sharex=True,figsize=(6, 6))
       #fig.suptitle('Normalized Opening of Interface')
       #axs[0].set_title('with respect to fixed end')
       #axs[1].set_title('with respect to loaded end')
@@ -178,7 +178,7 @@ def simresultploter_part1(path):
             label, linestyle=label_linewidth(s)
             axs[0].plot(x_coords*100, start_normalized_dU, label=label , linewidth=0.8, linestyle=linestyle)
             axs[1].plot(x_coords*100, end_normalized_dU, label=label , linewidth=0.8, linestyle=linestyle)
-      axs[0].legend(prop={'size': 6}, loc='upper left')
+      axs[0].legend(prop={'size': 10}, loc='upper left')
       savefig_nomargin(path, '4-Normalized Opening of Interface')
       plt.close(fig)
       
@@ -237,20 +237,20 @@ def simresultploter_part1(path):
       h0 = nodes_data[490, 2 + 3*steps + step_to_plot[0]-1]*1000
       rect=mpatches.Rectangle((4.9,h0) ,0.1, h1-h0, fill = False, color = "black", linewidth = 0.8)
       ax[0].add_patch(rect)
-      ax[0].legend(prop={'size': 6}, loc='upper left')     
+      ax[0].legend(prop={'size': 10}, loc='upper left')     
       ax[1].set_xlim([4.9, 5.01])
       ax[1].set_ylim([h0, h1])
       for s in step_to_plot:
             dU = nodes_data[:, 2 + 3*steps + s-1]
             label, linewidth=label_linewidth(s)
             ax[1].plot(x_coords*100, dU*1000, label=label ,linewidth=0.8, linestyle=linestyle)          
-      ax[1].legend(prop={'size': 6}, loc='lower right')       
+      ax[1].legend(prop={'size': 10}, loc='lower right')       
       savefig_nomargin(path, '5-Normal Relative Displacements of Interface (opening)')
       plt.close(fig)
 
       ######################################################################################################
       # plot 6: plotting Tangential and Normal Relative Displacements Evolution of Interface selected nodes   
-      fig, ax = plt.subplots(2,1, sharex=True)
+      fig, ax = plt.subplots(2,1, sharex=True,figsize=(6, 6))
       #fig.suptitle('Relative Displacements Evolution in a point of Interface')
       ax[0].set(ylabel='Dv (mm)')
       ax[1].set(xlabel='Displacement load (mm)', ylabel='Du (mm)')
@@ -310,13 +310,13 @@ def simresultploter_part1(path):
             dU_peaks_index = np.where((dU[1:-1] > dU[0:-2]) * (dU[1:-1] > dU[2:]))[0] + 1
             dU_peaks=dU[dU_peaks_index]
             Peaks_step=dU_peaks_index+1
-      ax[0].legend(prop={'size': 5}, loc='upper left')
+      ax[0].legend(prop={'size': 10}, loc='upper left')
       savefig_nomargin(path, '6-Relative Displacements Evolution in a point of Interface')
       plt.close(fig)
 
       ######################################################################################################
       # plot 7: plotting Tangential and Normal tresses Evolution of Interface selected nodes   
-      fig, ax = plt.subplots(2,1, sharex=True)
+      fig, ax = plt.subplots(2,1, sharex=True,figsize=(6, 6))
       #fig.suptitle('Stresses Evolution in a point of Interface')
       ax[0].set(ylabel=r'$\tau$ (MPa)')
       ax[1].set(xlabel='Displacement load (mm)', ylabel=r'$\sigma$ (MPa)')
@@ -344,17 +344,17 @@ def simresultploter_part1(path):
             else: linestyle='solid'
             ax[0].plot(Diss_load*1000, Sigma_tt, label='loc: y={:.2f}cm {}'.format(nodes_data[n, 1]*100, label), linewidth=0.6, linestyle=linestyle)
             ax[1].plot(Diss_load*1000, Sigma_nn, label='loc: y={:.2f}cm {}'.format(nodes_data[n, 1]*100, label), linewidth=0.6, linestyle=linestyle)
-      ax[0].legend(prop={'size': 5}, loc='upper left')
+      ax[0].legend(prop={'size': 10}, loc='upper left')
       savefig_nomargin(path, '7-Stresses Evolution in a point of Interface')
       plt.close(fig)
       print('Detailed results of simulation {} saved in form of seven figures in \n {}'.format(simulation_name, path))
       
 
 # function defining fig specification for plotting desired curves in one frame
-def figspec_simresultploter_part2(axins_dim=[0.07, 0.77, 0.15, 0.15]):
-    ax_fontsize , axin_fontsize = 8, 6.5
+def figspec_simresultploter_part2(axins_dim=[0.09, 0.79, 0.15, 0.15]):
+    ax_fontsize , axin_fontsize = 16, 10
     plt.rcParams.update({'font.size': ax_fontsize})
-    fig1, ax1 = plt.subplots(figsize=(6, 4.5))
+    fig1, ax1 = plt.subplots(figsize=(5.5, 4.5))
     fig1.subplots_adjust(right=0.8)
     ax1.set_xlabel(xlabel='Displacement load (mm)', labelpad=0)
     ax1.set_ylabel(ylabel='Solid line: Max Hoop stress (Mpa)', labelpad=0)
@@ -364,13 +364,13 @@ def figspec_simresultploter_part2(axins_dim=[0.07, 0.77, 0.15, 0.15]):
     ax1_1.set_ylabel(ylabel='Dotted line: Concrete Reaction (KN)', labelpad=0)
     ax1_2.set_xlabel(xlabel='Displacement load (mm)', labelpad=0)
     ax1_2.set_ylabel(ylabel='Dashed line: Yarn Reaction at loaded end (KN)', labelpad=0)
-    ax1_2.spines.right.set_position(("axes", 1.1))
+    ax1_2.spines.right.set_position(("axes", 1.16))
     plt.rcParams.update({'font.size': axin_fontsize})
     axins = ax1.inset_axes(axins_dim)
     axins.set_xlabel(xlabel='Displacement load \n (mm)', labelpad=0)
     axins.set_ylabel(ylabel='Yarn stress (Gpa)' , labelpad=0 )
-    axins.xaxis.set_major_locator(MultipleLocator(0.2))
-    axins.yaxis.set_major_locator(MultipleLocator(1))
+    axins.xaxis.set_major_locator(MultipleLocator(0.3))
+    axins.yaxis.set_major_locator(MultipleLocator(1.5))
     secax_x = axins.secondary_xaxis('top')
     secax_y = axins.secondary_yaxis('right')
     plt.rcParams.update({'font.size': ax_fontsize})
@@ -413,7 +413,7 @@ def simresultploter_part2(ax1, ax1_1, ax1_2, axins, path):
         else:
                 sigma_tt=monitors[3].values[line_maxhoop+2:line_maxhoop+3+steps].astype(float)
 
-    ax1.plot(Diss_load*1000, sigma_tt , linewidth=1) 
+    ax1.plot(Diss_load*1000, sigma_tt) 
     # xmax = Diss_load[np.argmax(sigma_tt)]*1000
     # ymax = sigma_tt.max()
     # ax1.plot((xmax, xmax), (0, ymax), linewidth=0.4 , linestyle='dashed' , color='k')
@@ -430,7 +430,9 @@ def simresultploter_part2(ax1, ax1_1, ax1_2, axins, path):
                 C_R=np.insert(C_R, 0, 0)
         else:
                 C_R=monitors[3].values[line+6:line+6+steps].astype(float)
-    ax1_1.plot(Diss_load*1000, -C_R*1000, linestyle='dotted', linewidth=1)
+    ax1_1.plot(Diss_load*1000, -C_R*1000, linestyle='dotted')
+    ax1_1.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+
     # xmax = Diss_load[np.argmax(-C_R)]*1000
     # ymax = (-C_R*1000).max()
     # ax1_1.plot((xmax, xmax), (0, ymax), linewidth=0.4 , linestyle='dashed' , color='r')
@@ -446,7 +448,7 @@ def simresultploter_part2(ax1, ax1_1, ax1_2, axins, path):
                 Yarn_R_T=np.insert(Yarn_R_T, 0, 0)
         else:
                 Yarn_R_T=monitors[3].values[line+6:line+6+steps].astype(float)
-    ax1_2.plot(Diss_load*1000, Yarn_R_T*1000, linestyle='dashed', linewidth=1)
+    ax1_2.plot(Diss_load*1000, Yarn_R_T*1000, linestyle='dashed')
     
 
     # plotting YARN_TENSILE_STRESS

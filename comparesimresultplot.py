@@ -82,7 +82,7 @@ def simresultploter_part1(path,axs1,axs2,axs3,axs4,axs5,axs6):
       
       ######################################################################################################
       # plot 1: plotting Tangential and Normal Stress profile along the interface
-      plt.rcParams.update({'font.size': 6})
+      plt.rcParams.update({'font.size': 10})
             #fig.suptitle('Stress profile along the interface')
             #axs[0].set_title('Interface Tangential Stress')
             #axs[1].set_title('Interface Normal Stress ')
@@ -112,7 +112,7 @@ def simresultploter_part1(path,axs1,axs2,axs3,axs4,axs5,axs6):
             label, linestyle=label_linewidth(s)
             axs1[0].plot(x_coords*100, Sigma_tt, label=label, linewidth=0.8, linestyle=linestyle)
             axs1[1].plot(x_coords*100, Sigma_nn, label=label, linewidth=0.8, linestyle=linestyle)
-      axs1[0].legend(prop={'size': 6}, loc='upper left')
+      axs1[0].legend(prop={'size': 10}, loc='upper left')
     #   savefig_nomargin(path, '1-Stress profile along the interface')
     #   plt.close(fig)
       
@@ -129,7 +129,7 @@ def simresultploter_part1(path,axs1,axs2,axs3,axs4,axs5,axs6):
             label, linestyle=label_linewidth(s)
             axs2[1].plot(x_coords*100, dU*1000, label=label ,linewidth=0.8, linestyle=linestyle)
             axs2[0].plot(x_coords*100, dV*1000, label=label ,linewidth=0.8, linestyle=linestyle)
-      axs2[0].legend(prop={'size': 6}, loc='upper left')
+      axs2[0].legend(prop={'size': 10}, loc='upper left')
     #   savefig_nomargin(path, '2-Relative Displacements profile along the Interface')
     #   plt.close(fig)
       
@@ -146,7 +146,7 @@ def simresultploter_part1(path,axs1,axs2,axs3,axs4,axs5,axs6):
             label, linestyle=label_linewidth(s)
             axs3[0].plot(x_coords*100, startshifted_dU, label=label , linewidth=0.8 , linestyle=linestyle)
             axs3[1].plot(x_coords*100, endshifted_dU, label=label , linewidth=0.8, linestyle=linestyle)
-      axs3[0].legend(prop={'size': 6}, loc='upper left')
+      axs3[0].legend(prop={'size': 10}, loc='upper left')
     #   savefig_nomargin(path, '3-Relative Opening of Interface')
     #   plt.close(fig)
       
@@ -163,7 +163,7 @@ def simresultploter_part1(path,axs1,axs2,axs3,axs4,axs5,axs6):
             label, linestyle=label_linewidth(s)
             axs4[0].plot(x_coords*100, start_normalized_dU, label=label , linewidth=0.8, linestyle=linestyle)
             axs4[1].plot(x_coords*100, end_normalized_dU, label=label , linewidth=0.8, linestyle=linestyle)
-      axs4[0].legend(prop={'size': 6}, loc='upper left')
+      axs4[0].legend(prop={'size': 10}, loc='upper left')
     #   savefig_nomargin(path, '4-Normalized Opening of Interface')
     #   plt.close(fig)
       
@@ -230,7 +230,7 @@ def simresultploter_part1(path,axs1,axs2,axs3,axs4,axs5,axs6):
             dU_peaks_index = np.where((dU[1:-1] > dU[0:-2]) * (dU[1:-1] > dU[2:]))[0] + 1
             dU_peaks=dU[dU_peaks_index]
             Peaks_step=dU_peaks_index+1
-      axs5[0].legend(prop={'size': 5}, loc='upper left')
+      axs5[0].legend(prop={'size': 10}, loc='upper left')
     #   savefig_nomargin(path, '6-Relative Displacements Evolution in a point of Interface')
     #   plt.close(fig)
 
@@ -263,7 +263,7 @@ def simresultploter_part1(path,axs1,axs2,axs3,axs4,axs5,axs6):
             else: linestyle='solid'
             axs6[0].plot(Diss_load*1000, Sigma_tt, label='loc: y={:.2f}cm {}'.format(nodes_data[n, 1]*100, label), linewidth=0.6, linestyle=linestyle)
             axs6[1].plot(Diss_load*1000, Sigma_nn, label='loc: y={:.2f}cm {}'.format(nodes_data[n, 1]*100, label), linewidth=0.6, linestyle=linestyle)
-      axs6[0].legend(prop={'size': 5}, loc='upper left')
+      axs6[0].legend(prop={'size': 10}, loc='upper left')
     #   savefig_nomargin(path, '7-Stresses Evolution in a point of Interface')
     #   plt.close(fig)
     #   print('Detailed results of simulation {} saved in form of seven figures in \n {}'.format(simulation_name, path))
@@ -271,7 +271,7 @@ def simresultploter_part1(path,axs1,axs2,axs3,axs4,axs5,axs6):
 
 # function defining fig specification for plotting desired curves in one frame
 def figspec_simresultploter_part2(axins_dim=[0.07, 0.77, 0.15, 0.15]):
-    ax_fontsize , axin_fontsize = 8, 6.5
+    ax_fontsize , axin_fontsize = 12, 10
     plt.rcParams.update({'font.size': ax_fontsize})
     fig1, ax1 = plt.subplots(figsize=(6, 4.5))
     fig1.subplots_adjust(right=0.8)
@@ -446,7 +446,7 @@ for s in step_to_plot:
     axs3.plot(x_coords*100, s2, label=label , linewidth=0.8, linestyle=linestyle)
     axs3.plot(x_coords*100, s3, label=label , linewidth=0.8, linestyle=linestyle)
 
-axs3.legend(prop={'size': 6}, loc='upper left')
+axs3.legend(prop={'size': 10}, loc='upper left')
 #   savefig_nomargin(path, '3-Relative Opening of Interface')
 #   plt.close(fig)
 
